@@ -1,0 +1,76 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>com.viiyue.plugins</groupId>
+		<artifactId>plugin-release-parent</artifactId>
+		<version>3</version>
+		<relativePath />
+	</parent>
+
+	<artifactId>ffmpeg-helper</artifactId>
+	<version>1.0.0</version>
+	<packaging>jar</packaging>
+
+	<name>ffmpeg-helper</name>
+	<url>https://github.com/tangxbai/ffmpeg-helper</url>
+	<description>Ffmpeg helper library</description>
+
+	<inceptionYear>2022</inceptionYear>
+
+	<scm>
+		<url>https://github.com/tangxbai/ffmpeg-helper.git</url>
+		<connection>scm:git:git@github.com:tangxbai/ffmpeg-helper.git</connection>
+		<developerConnection>scm:git:git@github.com:tangxbai/ffmpeg-helper.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<issueManagement>
+		<system>GitHub Issue Management</system>
+		<url>https://github.com/tangxbai/ffmpeg-helper/issues</url>
+	</issueManagement>
+
+	<properties>
+		<log.version>1.7.5</log.version>
+		<commons-io.version>2.6</commons-io.version>
+		<commons-lang.version>3.8.1</commons-lang.version>
+		<commons-codec.version>1.11</commons-codec.version>
+		<commons-collections.version>3.2.2</commons-collections.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${log.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons-lang.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>${commons-collections.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec.version}</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.3.9</version>
+        </dependency>
+	</dependencies>
+</project>
