@@ -1,9 +1,13 @@
 package com.tangxbai.ffmpeg;
 
 import com.viiyue.ffmpeg.FFSamples;
+import com.viiyue.ffmpeg.enums.Overlays;
+import com.viiyue.ffmpeg.enums.VideoSize;
 import com.viiyue.ffmpeg.filter.Filters;
-import com.viiyue.ffmpeg.filter.video.ToneMap;
-import com.viiyue.ffmpeg.filter.video.ToneMap.Option;
+import com.viiyue.ffmpeg.filter.Graph;
+import com.viiyue.ffmpeg.filter.video.Declare;
+import com.viiyue.ffmpeg.filter.video.Overlay;
+import com.viiyue.ffmpeg.filter.video.Scale;
 
 public class Test {
 
@@ -46,7 +50,9 @@ public class Test {
 //		filters.graph( Pad.of().size( 1920, 1080 ).position( "(ow-iw)/2", "(oh-ih)/2" ).color( Color.BLUE_VIOLET ) );
 //		filters.graph( Custom.define( "fspp" ).addArg( "quality", 0.5 ).addArg2( "filter_params", "|", "1", "2" ) );
 //		filters.graph( Stereo3d.of().out( OutputFormat.ABR ).in( InputFormat.AL ) );
-		filters.graph( ToneMap.of( Option.CLIP ).peak( 52.5 ).desat( 13.5 ) );
+//		filters.graph( ToneMap.of( Option.CLIP ).peak( 52.5 ).desat( 13.5 ) );
+		filters.graph( Graph.append( Declare.the().movie( "test.jpg" ) ).to( "wm" ) );
+		filters.graph( Graph.stream( "in", "wm" ).add( Overlay.at( Overlays.CENTER ), Scale.to( VideoSize.HD720 ) ).to( "out" ) );
 		System.out.println( filters );
 
 //		FFmpegExecutor executor = FFmpegExecutor.build();

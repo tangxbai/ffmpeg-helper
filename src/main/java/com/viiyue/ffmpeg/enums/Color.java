@@ -331,7 +331,7 @@ public enum Color implements AbstractEnum {
 		return ObjectUtils.defaultIfNull( this.colorName, this.color );
 	}
 
-	public static final Color ifEmpty( Color color ) {
+	public static final Color nullable( Color color ) {
 		return color == null ? Color.RANDOM : color;
 	}
 

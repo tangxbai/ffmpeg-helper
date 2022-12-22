@@ -65,7 +65,7 @@ public class Shear extends AbstractFunction<Shear> {
 	 * @return {@link Shear} instance
 	 */
 	public Shear fillColor( Color color ) {
-		return fillColor( Color.ifEmpty( color ).command() );
+		return fillColor( Color.nullable( color ).command() );
 	}
 
 	/**

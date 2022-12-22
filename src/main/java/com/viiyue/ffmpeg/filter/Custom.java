@@ -1,6 +1,4 @@
-package com.viiyue.ffmpeg.filter.video;
-
-import com.viiyue.ffmpeg.filter.AbstractColorFunction;
+package com.viiyue.ffmpeg.filter;
 
 /**
  * Custom abstract function

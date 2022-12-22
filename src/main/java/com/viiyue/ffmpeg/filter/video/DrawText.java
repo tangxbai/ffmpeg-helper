@@ -132,7 +132,7 @@ public class DrawText extends AbstractFunction<DrawText> {
 	 * @return the {@link DrawText} instance
 	 */
 	public DrawText fontColor( Color color ) {
-		return fontColor( Color.ifEmpty( color ).command() );
+		return fontColor( Color.nullable( color ).command() );
 	}
 
 	/**
@@ -257,7 +257,7 @@ public class DrawText extends AbstractFunction<DrawText> {
 	 * @return the {@link DrawText} instance
 	 */
 	public DrawText boxColor( Color color ) {
-		return boxColor( Color.ifEmpty( color ).command() );
+		return boxColor( Color.nullable( color ).command() );
 	}
 
 	/**

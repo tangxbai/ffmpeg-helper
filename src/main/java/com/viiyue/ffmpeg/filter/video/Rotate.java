@@ -127,7 +127,7 @@ public class Rotate extends AbstractFunction<Rotate> {
 	 * @return {@link Rotate} instance
 	 */
 	public Rotate fillColor( Color color ) {
-		return fillColor( Color.ifEmpty( color ).command() );
+		return fillColor( Color.nullable( color ).command() );
 	}
 
 	/**

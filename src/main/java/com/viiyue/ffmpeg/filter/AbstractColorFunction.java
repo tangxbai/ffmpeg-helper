@@ -37,7 +37,7 @@ public abstract class AbstractColorFunction<T extends AbstractColorFunction<?>> 
 	 * @see Color
 	 */
 	public T color( Color color, double alpha ) {
-		return color( ( color == null ? Color.RANDOM : color ).command(), alpha );
+		return color( Color.nullable( color ).command(), alpha );
 	}
 
 	/**

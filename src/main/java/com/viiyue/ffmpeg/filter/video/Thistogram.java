@@ -117,7 +117,7 @@ public class Thistogram extends AbstractFunction<Thistogram> {
 	 * @see Color
 	 */
 	public Thistogram envelopeColor( Color color ) {
-		return envelopeColor( Color.ifEmpty( color ).command() ); // ecolor, ec
+		return envelopeColor( Color.nullable( color ).command() ); // ecolor, ec
 	}
 
 	/**
