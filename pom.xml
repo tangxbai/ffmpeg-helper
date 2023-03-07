@@ -1,3 +1,18 @@
+<!--
+  ~ Copyright (C) 2022-2023 the original author or authors.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -17,6 +32,19 @@
 	<name>ffmpeg-helper</name>
 	<url>https://github.com/tangxbai/ffmpeg-helper</url>
 	<description>Ffmpeg helper library</description>
+	<developers>
+		<developer>
+			<id>xbai</id>
+			<name>tangxbai</name>
+			<email>tangxbai@hotmail.com</email>
+			<timezone>GMT+8</timezone>
+			<url>https://github.com/tangxbai</url>
+			<roles>
+				<role>Java Developer</role>
+				<role>Owner</role>
+			</roles>
+		</developer>
+	</developers>
 
 	<inceptionYear>2022</inceptionYear>
 
@@ -36,7 +64,6 @@
 		<log.version>1.7.5</log.version>
 		<commons-io.version>2.6</commons-io.version>
 		<commons-lang.version>3.8.1</commons-lang.version>
-		<commons-codec.version>1.11</commons-codec.version>
 		<commons-collections.version>3.2.2</commons-collections.version>
 	</properties>
 
@@ -61,16 +88,5 @@
 			<artifactId>commons-collections</artifactId>
 			<version>${commons-collections.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>${commons-codec.version}</version>
-		</dependency>
-		
-		<dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.3.9</version>
-        </dependency>
 	</dependencies>
 </project>
