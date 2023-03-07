@@ -1,3 +1,15 @@
+/**
+ * Copyright (C) 2022-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ */
 package com.viiyue.ffmpeg.filter.video;
 
 import com.viiyue.ffmpeg.annotation.Function;
@@ -41,7 +53,7 @@ public class Scale extends AbstractFunction<Scale> {
 	 * @return the {@link Scale} instance
 	 */
 	public static final Scale to( int width, int height ) {
-		return new Scale().addArg( "w", width ).addArg( "h", height );
+		return new Scale().addBaseArg( "w", width ).addBaseArg( "h", height );
 	}
 
 	/**
@@ -55,31 +67,20 @@ public class Scale extends AbstractFunction<Scale> {
 	 * 
 	 * <ul>
 	 * <li><b>in_w, in_h</b> - the input width and height
-	 * 
 	 * <li><b>iw, ih</b> - these are the same as in_w and in_h.
-	 * 
 	 * <li><b>out_w, out_h</b> - the output (scaled) width and height
-	 * 
 	 * <li><b>ow, oh</b> - these are the same as out_w and out_h
-	 * 
 	 * <li><b>a</b> - the same as iw / ih
-	 * 
 	 * <li><b>sar</b> - input sample aspect ratio
-	 * 
 	 * <li><b>dar</b> - the input display aspect ratio. Calculated from (iw / ih) * sar.
-	 * 
 	 * <li><b>hsub, vsub</b> - horizontal and vertical input chroma subsample values. For example for the
 	 * pixel format "yuv422p" hsub is 2 and vsub is 1.
-	 * 
 	 * <li><b>ohsub, ovsub</b> - horizontal and vertical output chroma subsample values. For example for the
 	 * pixel format "yuv422p" hsub is 2 and vsub is 1.
-	 * 
 	 * <li><b>n</b> - the (sequential) number of the input frame, starting from 0. Only available with
 	 * eval=frame.
-	 * 
 	 * <li><b>t</b> - the presentation timestamp of the input frame, expressed as a number of seconds. Only
 	 * available with eval=frame.
-	 * 
 	 * <li><b>pos</b> - the position (byte offset) of the frame in the input stream, or NaN if this
 	 * information is unavailable and/or meaningless (for example in case of synthetic video). Only available
 	 * with eval=frame.
@@ -92,7 +93,7 @@ public class Scale extends AbstractFunction<Scale> {
 	 * @return the {@link Scale} instance
 	 */
 	public static final Scale to( String width, String height ) {
-		return new Scale().addArg( "w", width ).addArg( "h", height );
+		return new Scale().addBaseArg( "w", width ).addBaseArg( "h", height );
 	}
 
 	/**

@@ -1,24 +1,33 @@
+/**
+ * Copyright (C) 2022-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ */
 package com.tangxbai.ffmpeg;
 
-import com.viiyue.ffmpeg.FFSamples;
-import com.viiyue.ffmpeg.enums.Overlays;
-import com.viiyue.ffmpeg.enums.VideoSize;
+import com.viiyue.ffmpeg.FFmpeger;
+import com.viiyue.ffmpeg.executor.FFmpegExecutor;
 import com.viiyue.ffmpeg.filter.Filters;
-import com.viiyue.ffmpeg.filter.Graph;
-import com.viiyue.ffmpeg.filter.video.Declare;
-import com.viiyue.ffmpeg.filter.video.Overlay;
 import com.viiyue.ffmpeg.filter.video.Scale;
 
 public class Test {
 
 	public static void main( String [] args ) {
 
-		FFSamples.init( "E:/Ffmpeg-full-build/bin", "F:/desktop" );
+		FFmpeger.init( "ffmpeg.exe", "F:/desktop" );
+//		FFmpeger.setLogLocation( "F:/desktop" );
 //		FFSamples.init( "C:/Users/admin/.javacpp/cache/ffmpeg-5.0-1.5.7-windows-x86_64.jar/org/bytedeco/ffmpeg/windows-x86_64", "F:/desktop" );
 //		FFSamples.readVideoInfo( "F:/videos/bin/input.mp4" );
 //		FFSamples.readVideoInfo( "F:/videos/bin/demo.mp4" );
 
-		Filters filters = Filters.complex();
+		Filters filters = Filters.simple();
 //		filters.graph( Graph.stream( "0" ).add( "settb=AVTB", "setpts=PTS-STARTPTS" ).to( "0x" ) );
 //		filters.graph( Graph.stream( "1" ).add( "settb=AVTB", "setpts=PTS-STARTPTS" ).to( "1x" ) );
 //		filters.graph( Graph.stream( "2" ).add( "settb=AVTB", "setpts=PTS-STARTPTS" ).to( "2x" ) );
@@ -40,6 +49,7 @@ public class Test {
 //		filters.graph( CoreImage.of().outputRect( 10, 10, 100, 100 ) );
 //		filters.graph( CoverRectangle.cover( "F:/videos/poster.png" ) );
 //		filters.graph( Crop.the( 100, 100, 500, 500 ).keepAspect() );
+		filters.graph( Scale.to( 400, -1 ) );
 //		filters.graph( CropDetect.the().limit( 50 ) );
 //		filters.graph( Eq.of().contrast( 0.5 ).eval( When.FRAME ) );
 //		filters.graph( Flip.horizontal(), Flip.vertical() );
@@ -51,14 +61,14 @@ public class Test {
 //		filters.graph( Custom.define( "fspp" ).addArg( "quality", 0.5 ).addArg2( "filter_params", "|", "1", "2" ) );
 //		filters.graph( Stereo3d.of().out( OutputFormat.ABR ).in( InputFormat.AL ) );
 //		filters.graph( ToneMap.of( Option.CLIP ).peak( 52.5 ).desat( 13.5 ) );
-		filters.graph( Graph.append( Declare.the().movie( "test.jpg" ) ).to( "wm" ) );
-		filters.graph( Graph.stream( "in", "wm" ).add( Overlay.at( Overlays.CENTER ), Scale.to( VideoSize.HD720 ) ).to( "out" ) );
+//		filters.graph( Graph.append( Declare.the( "test.jpg" ) ).to( "wm" ) );
+//		filters.graph( Graph.stream( "in", "wm" ).add( Overlay.at( Overlays.CENTER ), Scale.to( VideoSize.HD720 ) ).to( "out" ) );
 		System.out.println( filters );
 
-//		FFmpegExecutor executor = FFmpegExecutor.build();
-//		executor.input( "F:/videos/bin/input.mp4" );
-//		executor.filters( filters );
-//		executor.to( "F:/videos/bin/output.mp4" );
+		FFmpegExecutor executor = FFmpegExecutor.build();
+		executor.input( "F:/videos/bin/input.mp4" );
+		executor.filters( filters );
+		executor.to( "F:/videos/bin/output.mp4" );
 
 	}
 

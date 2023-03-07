@@ -1,3 +1,15 @@
+/**
+ * Copyright (C) 2022-2023 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is
+ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and limitations under the License.
+ */
 package com.viiyue.ffmpeg.filter;
 
 import java.math.BigDecimal;
@@ -25,6 +37,9 @@ import com.viiyue.ffmpeg.util.Helper;
 public abstract class AbstractFunction<T extends AbstractFunction<?>> extends AbstractResult<T> {
 
 	private static final Map<Class<?>, String> funNames = new ConcurrentHashMap<>( 16 );
+
+	private boolean basicOnly = true;
+	private Map<String, Object> basically;
 
 	private final String separator;
 	private final HashMap<String, Object> args = new LinkedHashMap<String, Object>( 8 ) {
@@ -112,8 +127,7 @@ public abstract class AbstractFunction<T extends AbstractFunction<?>> extends Ab
 	 * @return the current instance reference
 	 */
 	protected T status( String arg, boolean state ) {
-		this.args.put( arg, state ? 1 : 0 );
-		return ( T ) this;
+		return this.addArg( arg, state ? 1 : 0 );
 	}
 
 	/**
@@ -124,8 +138,7 @@ public abstract class AbstractFunction<T extends AbstractFunction<?>> extends Ab
 	 * @return the current instance reference
 	 */
 	protected T addValue( Object value ) {
-		this.args.put( null, value );
-		return ( T ) this;
+		return this.addArg( null, value );
 	}
 
 	/**
@@ -161,6 +174,12 @@ public abstract class AbstractFunction<T extends AbstractFunction<?>> extends Ab
 	 * @return the current instance reference
 	 */
 	protected T addArg2( String argName, String separator, Object ... values ) {
+		if ( basicOnly ) {
+			this.basicOnly = false;
+			if ( this.basically != null ) {
+				this.basically.forEach( ( k, v ) -> addArg2( k, separator, v ) );
+			}
+		}
 		if ( ArrayUtils.isEmpty( values ) ) {
 			this.args.put( argName, null );
 		} else if ( values.length == 1 ) {
@@ -168,6 +187,22 @@ public abstract class AbstractFunction<T extends AbstractFunction<?>> extends Ab
 		} else {
 			this.args.put( argName, Helper.expandAll( separator, Helper::toValue, values ) );
 		}
+		return ( T ) this;
+	}
+
+	/**
+	 * Add the basic parameters required by the function, the values can be {@link String},
+	 * {@link AbstractEnum}, {@link Double}, {@link Float} or {@link BigDecimal}.
+	 * 
+	 * @param argName the base parameter name
+	 * @param values  the function varargs
+	 * @return the current instance reference
+	 */
+	protected T addBaseArg( String argName, Object value ) {
+		if ( this.basically == null ) {
+			this.basically = new LinkedHashMap<String, Object>( 4 );
+		}
+		this.basically.put( argName, value );
 		return ( T ) this;
 	}
 
@@ -197,6 +232,13 @@ public abstract class AbstractFunction<T extends AbstractFunction<?>> extends Ab
 
 	@Override
 	protected String getResult() {
+		if ( basicOnly ) {
+			this.basicOnly = false;
+			if ( this.basically != null ) {
+				this.addValues( this.basically.values().toArray() );
+			}
+		}
+
 		String funName = getFunName();
 
 		// output -> function
