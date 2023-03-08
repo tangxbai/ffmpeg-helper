@@ -48,7 +48,7 @@
 	</issueManagement>
 
 	<properties>
-		<log.version>1.7.5</log.version>
+		<log.version>1.7.28</log.version>
 		<commons-io.version>2.6</commons-io.version>
 		<commons-lang.version>3.8.1</commons-lang.version>
 		<commons-collections.version>3.2.2</commons-collections.version>
