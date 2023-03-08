@@ -32,19 +32,6 @@
 	<name>ffmpeg-helper</name>
 	<url>https://github.com/tangxbai/ffmpeg-helper</url>
 	<description>Ffmpeg helper library</description>
-	<developers>
-		<developer>
-			<id>xbai</id>
-			<name>tangxbai</name>
-			<email>tangxbai@hotmail.com</email>
-			<timezone>GMT+8</timezone>
-			<url>https://github.com/tangxbai</url>
-			<roles>
-				<role>Java Developer</role>
-				<role>Owner</role>
-			</roles>
-		</developer>
-	</developers>
 
 	<inceptionYear>2022</inceptionYear>
 
