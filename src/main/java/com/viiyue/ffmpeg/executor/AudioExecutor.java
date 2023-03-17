@@ -37,7 +37,7 @@ public class AudioExecutor extends CommonExecutor<AudioExecutor> {
 	private AudioExecutor( boolean overwrite ) {
 		super( Library.FFMPEG );
 		if ( overwrite ) {
-			super.overwrite();
+			super.override();
 		}
 	}
 

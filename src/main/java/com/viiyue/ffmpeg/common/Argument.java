@@ -30,6 +30,7 @@ public final class Argument {
 	private int index;
 	private String key;
 	private Object value;
+	private boolean quotesWrap;
 
 	public int getIndex() {
 		return index;
@@ -57,6 +58,14 @@ public final class Argument {
 
 	public boolean is( String key ) {
 		return Objects.equals( Helper.command( key ), this.key );
+	}
+	
+	public void quotesWrap() {
+		this.quotesWrap = true;
+	}
+	
+	public boolean isQuotesWrap() {
+		return quotesWrap;
 	}
 
 	@Override

@@ -21,13 +21,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -35,9 +30,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 
-import com.viiyue.ffmpeg.common.Const;
 import com.viiyue.ffmpeg.enums.Library;
-import com.viiyue.ffmpeg.util.Assert;
 import com.viiyue.ffmpeg.util.Helper;
 
 /**
@@ -49,49 +42,49 @@ import com.viiyue.ffmpeg.util.Helper;
  */
 public abstract class AbstractExecutor<T extends AbstractCommander<?>> extends AbstractCommander<T> {
 
-	private static final Map<String, Boolean> VALIDATED = new HashMap<>( 4 );
-	private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern( "YYYYMMddHHmmss" );
-	private static final AtomicReference<String> LIBRARY_REF = new AtomicReference<>();
-	private static final AtomicReference<String> LOG_LOCATION_REF = new AtomicReference<>( Const.TEMP_PATH );
-
-	public static final void setLibrary( String library ) {
-		LIBRARY_REF.set( library );
-	}
-
-	public static final void setLogLocation( String logLocation ) {
-		LOG_LOCATION_REF.set( logLocation );
-	}
-
 	private final Library library;
 
 	public AbstractExecutor( Library library ) {
 		this.library = library;
 	}
 
+	/**
+	 * @return the log implementation
+	 */
 	protected abstract Logger getLogger();
 
+	/**
+	 * Execute the final command and return the execution result
+	 * 
+	 * @return the execution result
+	 */
 	protected final String execute() {
 		return execute( null );
 	}
 
+	/**
+	 * Execute the final command and return the execution result
+	 * 
+	 * @param message the additional message to display
+	 * @return the execution result
+	 */
 	protected final String execute( String message ) {
 		Logger logger = getLogger();
 		StopWatch monitor = StopWatch.createStarted();
 
-		String library = loadLibrary();
-		String logLocation = fetchLogLocation();
-		String libraryName = FilenameUtils.getBaseName( library );
+		String executable = library.getExecutable();
+		String logLocation = library.getLogLocation();
+		String libraryName = FilenameUtils.getBaseName( executable );
 		String commander = StringUtils.capitalize( libraryName );
 
-		List<String> commands = super.toCommands( library );
+		List<String> commands = super.toCommands( executable );
 
 		if ( logger != null && logger.isInfoEnabled() ) {
-			List<String> temps = super.toCommands( libraryName );
 			logger.info( "------------------------------------------------------------------------" );
-			if ( !Objects.equals( library, libraryName ) ) {
-				logger.info( "{} library: {}", commander, library );
+			if ( !Objects.equals( executable, libraryName ) ) {
+				logger.info( "{} library: {}", commander, executable );
 			}
-			logger.info( "{} command: {}", commander, StringUtils.join( temps, ' ' ) );
+			logger.info( "{} command: {}", commander, super.toCommandString( libraryName ) );
 		}
 
 		File output = new File( logLocation );
@@ -125,20 +118,17 @@ public abstract class AbstractExecutor<T extends AbstractCommander<?>> extends A
 				}
 				throw new InterruptedException( libraryName + " command was interrupted" );
 			}
-			if ( output.exists() ) {
-				output.delete();
-			}
 			if ( output.length() == 0 ) {
 				return StringUtils.EMPTY;
 			}
-			String out = FileUtils.readFileToString( output, StandardCharsets.UTF_8 );
+			String content = FileUtils.readFileToString( output, StandardCharsets.UTF_8 );
 			if ( logger != null && logger.isInfoEnabled() ) {
 				logger.info( "{} execution completed", commander );
 				if ( message != null ) {
 					logger.info( "{} {}", commander, message );
 				}
 			}
-			return out;
+			return content;
 		} catch ( IOException e ) {
 			exception = true;
 			throw new RuntimeException( libraryName + " command execution error" );
@@ -147,18 +137,24 @@ public abstract class AbstractExecutor<T extends AbstractCommander<?>> extends A
 			throw new RuntimeException( e.getMessage() );
 		} finally {
 			monitor.stop();
-			if ( exception && logger != null && logger.isErrorEnabled() ) {
-				if ( !printed ) {
-					logger.error( "------------------------------------------------------------------------" );
-					logger.error( "* An exception occurred in the execution of \"{}\"", library );
-					if ( output.length() > 0 ) {
-						logger.error( "* Please check: \"{}\"", logLocation );
+			if ( exception ) {
+				if ( logger != null && logger.isErrorEnabled() ) {
+					if ( !printed ) {
+						logger.error( "------------------------------------------------------------------------" );
+						logger.error( "* An exception occurred in the execution of \"{}\"", executable );
+						if ( output.length() > 0 ) {
+							logger.error( "* Please check: \"{}\"", logLocation );
+						}
+						if ( !Helper.cmdCheck( executable, "--help" ) ) {
+							logger.error( "* Maybe the \"{}\" library doesn't seem to exist", executable );
+						}
 					}
-					if ( !Helper.cmdCheck( library, "--help" ) ) {
-						logger.error( "* Maybe the \"{}\" library doesn't seem to exist", library );
-					}
+					logger.error( "----------------------------------------------------------------------" + ".--" );
 				}
-				logger.error( "----------------------------------------------------------------------" + ".--" );
+			} else {
+				if ( output.exists() ) {
+					output.delete();
+				}
 			}
 			if ( logger != null && logger.isInfoEnabled() ) {
 				logger.info( "{} execution time {}", commander, monitor.toString() );
@@ -167,30 +163,4 @@ public abstract class AbstractExecutor<T extends AbstractCommander<?>> extends A
 		}
 	}
 
-	private String loadLibrary() {
-		String thePath = LIBRARY_REF.get();
-		if ( Objects.equals( VALIDATED.get( thePath ), Boolean.TRUE ) ) {
-			return thePath;
-		}
-		Assert.notNull( thePath, "You must specify the library path for " + library.getName() + "!" );
-		File theLibrary = new File( thePath );
-		if ( theLibrary.exists() ) {
-			Assert.isFalse( theLibrary.isDirectory(),
-					"The specified " + library.getName() + " library cannot be a directory!" );
-		}
-		VALIDATED.put( thePath, Boolean.TRUE );
-		return thePath;
-	}
-
-	private String fetchLogLocation() {
-		String thePath = LOG_LOCATION_REF.get();
-		String extension = FilenameUtils.getExtension( thePath );
-		if ( StringUtils.isEmpty( extension ) ) {
-			thePath = Helper.fixPath( thePath );
-			String datetime = FORMATTER.format( LocalDateTime.now() );
-			thePath += Const.FFMPEG + "/" + library.getName() + "-error-" + datetime + ".log";
-		}
-		return thePath;
-	}
-	
 }

@@ -18,7 +18,6 @@ package com.viiyue.ffmpeg.util;
 import java.awt.Color;
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.Locale;
 import java.util.StringJoiner;
 import java.util.function.Function;
 import java.util.regex.Pattern;
@@ -27,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.viiyue.ffmpeg.common.AbstractEnum;
 import com.viiyue.ffmpeg.common.Const;
-import com.viiyue.ffmpeg.enums.Platform;
 
 /**
  * Common helper for global project
@@ -66,10 +64,10 @@ public final class Helper {
 	}
 
 	public static String quotes( String input ) {
-		if ( input.startsWith( Const.QUOTE ) && input.endsWith( Const.QUOTE ) ) {
+		if ( input.startsWith( Const.DB_QUOTES ) && input.endsWith( Const.DB_QUOTES ) ) {
 			return input;
 		}
-		return Const.QUOTE + input + Const.QUOTE;
+		return Const.DB_QUOTES + input + Const.DB_QUOTES;
 	}
 	
 	public static String fixPath( String path ) {
@@ -112,6 +110,14 @@ public final class Helper {
 			}
 		}
 		return joiner;
+	}
+	
+	public static StringJoiner expandFlags( AbstractEnum ... flags ) {
+		return expandFlags( Const.APPEND_SEPARATOR, flags );
+	}
+	
+	public static StringJoiner expandFlags( String separtor, AbstractEnum ... flags ) {
+		return Helper.expandAll( separtor, Helper::toValue, flags );
 	}
 
 	public static String toHexColor( Color color ) {
@@ -179,28 +185,6 @@ public final class Helper {
 			return Runtime.getRuntime().exec( cmd ).waitFor() == 0;
 		} catch ( Exception e ) {
 			return false;
-		}
-	}
-
-	public static Platform getPlatform() {
-		String jvmName = System.getProperty( "java.vm.name", "" ).toLowerCase( Locale.ENGLISH );
-		String osName = System.getProperty( "os.name", "" ).toLowerCase( Locale.ENGLISH );
-		if ( jvmName.startsWith( "dalvik" ) && osName.startsWith( "linux" ) ) {
-			osName = "android";
-		} else if ( jvmName.startsWith( "robovm" ) && osName.startsWith( "darwin" ) ) {
-			osName = "ios";
-		} else if ( osName.startsWith( "mac os x" ) || osName.startsWith( "darwin" ) ) {
-			osName = "macosx";
-		} else {
-			int spaceIndex = osName.indexOf( ' ' );
-			if ( spaceIndex > 0 ) {
-				osName = osName.substring( 0, spaceIndex );
-			}
-		}
-		try {
-			return Platform.valueOf( osName.toUpperCase( Locale.ENGLISH ) );
-		} catch ( Exception e ) {
-			return Platform.WINDOWS;
 		}
 	}
 

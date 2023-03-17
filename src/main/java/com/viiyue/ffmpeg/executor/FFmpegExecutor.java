@@ -44,7 +44,7 @@ public class FFmpegExecutor extends CommonExecutor<FFmpegExecutor> {
 	private FFmpegExecutor( boolean overwrite ) {
 		super( Library.FFMPEG );
 		if ( overwrite ) {
-			super.overwrite();
+			super.override();
 		}
 	}
 
@@ -58,7 +58,7 @@ public class FFmpegExecutor extends CommonExecutor<FFmpegExecutor> {
 	}
 
 	public FFmpegExecutor copy() {
-		return super.cmd( "-c:a", "copy" );
+		return super.cmd( "c:a", "copy" );
 	}
 
 	public FFmpegExecutor disable() {
@@ -128,13 +128,13 @@ public class FFmpegExecutor extends CommonExecutor<FFmpegExecutor> {
 	public FFmpegExecutor resize( VideoSize size ) {
 		return super.cmd( "-s", size );
 	}
-
+	
 	public FFmpegExecutor filters( Filters filters ) {
-		return super.cmd( filters.getFilter(), filters );
+		return super.cmdWrap( filters.getFilter(), filters );
 	}
 
 	public FFmpegExecutor filters( AbstractResult<?> ... results ) {
-		return filters( Filters.simple().graph( results ) );
+		return filters( Filters.simple().add( results ).over() );
 	}
 
 	public String to( String output ) {

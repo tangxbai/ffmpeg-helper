@@ -15,7 +15,9 @@
  */
 package com.viiyue.ffmpeg.executor;
 
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,13 +117,18 @@ public class FFprobeExecutor extends CommonExecutor<FFprobeExecutor> {
 	public String toIniString() {
 		return to( "ini" );
 	}
+	
+	private static Map<String, Object> caches = new ConcurrentHashMap<String, Object>( 128 );
 
 	public Optional<FFprobe> toBean() {
-		return Optional.ofNullable( Jaxb.context().toBean( to( "xml" ), FFprobe.class ) );
+		return ( Optional<FFprobe> ) caches.computeIfAbsent( toCommandString(), cmd -> {
+			return Optional.ofNullable( Jaxb.context().toBean( to( "xml" ), FFprobe.class ) );
+		});
 	}
 
 	private String to( String format ) {
-		return super.cmd( "of", format ).execute();
+		super.cmd( "of", format );
+		return ( String ) caches.computeIfAbsent( toCommandString(), cmd -> execute() );
 	}
 
 }

@@ -41,6 +41,62 @@ public class Trim extends AbstractColorFunction<Trim> {
 	}
 
 	/**
+	 * Quickly create an instances of {@link Trim}
+	 * 
+	 * @param start the timestamp of the first frame
+	 * @param end   the timestamp of the first frame
+	 * @return the {@link Trim} instance
+	 */
+	public static final Trim to( int start, int end ) {
+		return new Trim().start( start ).end( end );
+	}
+
+	/**
+	 * Quickly create an instances of {@link Trim}
+	 * 
+	 * @param start the timestamp of the first frame that should be passed
+	 * @param end   the timestamp of the end frame that should be passed
+	 * @return the {@link Trim} instance
+	 */
+	public static final Trim to( String start, String end ) {
+		return new Trim().start( start ).end( end );
+	}
+
+	/**
+	 * <p>
+	 * Specify the time of the start of the kept section, i.e. the frame with the timestamp start will be the
+	 * first frame in the output.
+	 * 
+	 * <p>
+	 * See <a href="https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax">(ffmpeg-utils)the Time duration
+	 * section in the ffmpeg-utils(1) manual</a> for the accepted syntax
+	 * 
+	 * @apiNote (duration) start
+	 * @param value the timestamp of the first frame
+	 * @return the {@link Trim} instance
+	 */
+	public Trim start( int value ) {
+		return super.addBaseArg( "start", value );
+	}
+
+	/**
+	 * <p>
+	 * Specify the time of the first frame that will be dropped, i.e. the frame immediately preceding the one
+	 * with the timestamp end will be the last frame in the output.
+	 * 
+	 * <p>
+	 * See <a href="https://ffmpeg.org/ffmpeg-utils.html#time-duration-syntax">(ffmpeg-utils)the Time duration
+	 * section in the ffmpeg-utils(1) manual</a> for the accepted syntax
+	 * 
+	 * @apiNote (duration) end
+	 * @param value the timestamp of the first frame
+	 * @return the {@link Trim} instance
+	 */
+	public Trim end( int value ) {
+		return super.addBaseArg( "end", value );
+	}
+
+	/**
 	 * <p>
 	 * Specify the time of the start of the kept section, i.e. the frame with the timestamp start will be the
 	 * first frame in the output.
@@ -54,7 +110,7 @@ public class Trim extends AbstractColorFunction<Trim> {
 	 * @return the {@link Trim} instance
 	 */
 	public Trim start( String expression ) {
-		return super.addArg( "start", expression );
+		return super.addBaseArg( "start", expression );
 	}
 
 	/**
@@ -71,7 +127,7 @@ public class Trim extends AbstractColorFunction<Trim> {
 	 * @return the {@link Trim} instance
 	 */
 	public Trim end( String expression ) {
-		return super.addArg( "end", expression );
+		return super.addBaseArg( "end", expression );
 	}
 
 	/**

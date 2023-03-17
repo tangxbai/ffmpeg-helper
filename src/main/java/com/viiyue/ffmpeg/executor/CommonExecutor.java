@@ -16,12 +16,17 @@
 package com.viiyue.ffmpeg.executor;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import com.viiyue.ffmpeg.enums.Library;
+import com.viiyue.ffmpeg.enums.Preset;
 
 /**
- * The abstract command executor, you must have a subclass to implement it.
+ * The abstract command executor, you should have a subclass to implement it.
  * 
  * @author tangxbai
  * @since 2022/05/25
@@ -35,6 +40,13 @@ public abstract class CommonExecutor<T extends GlobalExecutor<?>> extends Global
 		super( library );
 	}
 
+	/**
+	 * Force input or output file format. The format is normally auto detected for input files and guessed
+	 * from the file extension for output files, so this option is not needed in most cases.
+	 * 
+	 * @param format
+	 * @return
+	 */
 	public T format( String format ) {
 		return super.cmd( "f", format );
 	}
@@ -96,39 +108,112 @@ public abstract class CommonExecutor<T extends GlobalExecutor<?>> extends Global
 	}
 
 	public T map( String who ) {
-		super.cmd( "map", who );
-		return ( T ) this;
+		return super.cmd( "map", who );
+	}
+	
+	/**
+	 * This option allows you to set a range of choices from very fast (optimal speed) to very slow (best
+	 * quality).
+	 * 
+	 * @param preset the preset option
+	 * @return the current instance
+	 * @since 1.0.1
+	 */
+	public T preset( Preset preset ) {
+		return super.cmd( "preset", preset );
+	}
+	
+	/**
+	 * Set the number of frames to output
+	 * 
+	 * @param value the frames number
+	 * @return the current instance
+	 */
+	public T filter( int value ) {
+		return super.cmd( "filter", value );
 	}
 
-	public T filter( int filterGraph ) {
-		super.cmd( "filter", filterGraph );
+	/**
+	 * Specifies the input source, which can be a file path or another expression.
+	 * 
+	 * @param inputs an array of input sources
+	 * @return the current instance
+	 */
+	public T input( String ... inputs ) {
+		return inputs( Arrays.asList( inputs ) );
+	}
+	
+	/**
+	 * Specifies the input source, which can be a file path or another expression.
+	 * 
+	 * @param inputs the list of input sources
+	 * @return the current instance
+	 */
+	public T inputs( List<String> inputs ) {
+		if ( CollectionUtils.isNotEmpty( inputs ) ) {
+			this.inputs = inputs.size();
+			for ( String input : inputs ) {
+				if ( StringUtils.isNotEmpty( input ) ) {
+					super.cmd( "i", input, false );
+				}
+			}
+		}
 		return ( T ) this;
 	}
-
-	public T input( String ... files ) {
-		this.inputs = files.length;
-		for ( String f : files ) {
-			super.cmd( "i", fileCheck( f ), false );
+	
+	/**
+	 * Specifies the input file
+	 * 
+	 * @param files an array of input files
+	 * @return the current instance
+	 */
+	public T file( File ... files ) {
+		return files( Arrays.asList( files ) );
+	}
+	
+	/**
+	 * Specifies the input file path
+	 * 
+	 * @param files the array of input files
+	 * @return the current instance
+	 */
+	public T file( String ... files ) {
+		return files( Arrays.asList( files ) );
+	}
+	
+	/**
+	 * Specifies the input file
+	 * 
+	 * @param files the list of input files, and which can only be {@link String} and {@link File}.
+	 * @return the current instance
+	 */
+	public T files( List<?> files ) {
+		if ( CollectionUtils.isNotEmpty( files ) ) {
+			this.inputs = files.size();
+			for ( Object input : files ) {
+				if ( input instanceof String ) {
+					String i = ( String ) input;
+					if ( StringUtils.isNotEmpty( i ) ) {
+						super.cmd( "i", fileCheck( i ), false );
+					}
+				} else if ( input instanceof File ) {
+					File i = ( File ) input;
+					if ( i != null ) {
+						super.cmd( "i", fileCheck( i ).getAbsolutePath(), false );
+					}
+				}
+			}
 		}
 		return ( T ) this;
 	}
 
-	public T input( List<String> files ) {
-		this.inputs = files.size();
-		for ( String f : files ) {
-			super.cmd( "i", fileCheck( f ), false );
-		}
-		return ( T ) this;
-	}
-
-	public T input( File ... files ) {
-		this.inputs = files.length;
-		for ( File f : files ) {
-			super.cmd( "i", fileCheck( f.getAbsolutePath() ), false );
-		}
-		return ( T ) this;
-	}
-
+	/**
+	 * Do a simple file check
+	 * 
+	 * @param <E> the input file type
+	 * @param input the input file
+	 * @return the checked target
+	 */
 	private <E> E fileCheck( E input ) {
 		if ( input == null ) {
 			throw new NullPointerException( "Input file cannot be null" );

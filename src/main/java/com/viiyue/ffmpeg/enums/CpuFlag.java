@@ -15,34 +15,70 @@
  */
 package com.viiyue.ffmpeg.enums;
 
-import org.apache.commons.lang3.StringUtils;
+import com.viiyue.ffmpeg.annotation.Alias;
+import com.viiyue.ffmpeg.common.AbstractEnum;
 
 /**
- * Different server running platforms
+ * CPU flags
  *
  * @author tangxbai
- * @since 2022/06/15
+ * @since 2023/03/17
+ * @since 1.0.1
  */
-public enum Platform {
+public enum CpuFlag implements AbstractEnum {
 
-	LINUX, WINDOWS( ".exe" ), ANDROID( ".so" );
+//  X86
+	MMX,
+	MMXEXT,
+	SSE,
+	SSE2,
+	SSE2SLOW,
+	SSE3,
+	SSE3SLOW,
+	SSSE3,
+	ATOM,
+	@Alias( "sse4.1" )
+	SSE4_1,
+	@Alias( "sse4.2" )
+	SSE4_2,
+	AVX,
+	AVX2,
+	XOP,
+	FMA3,
+	FMA4,
+	@Alias( "3dnow" )
+	_3DNOW,
+	@Alias( "3dnowext" )
+	_3DNOWEXT,
+	BMI1,
+	BMI2,
+	CMOV,
+	
+// ARM
+	ARMV5TE,
+	ARMV6,
+	ARMV6T2,
+	VFP,
+	VFPV3,
+	NEON,
+	SETEND,
+	
+// AArch64
+	ARMV8,
+//	VFP,
+//	NEON,
+	
+// PowerPC
+	ALTIVEC,
 
-	private String ext;
-
-	private Platform() {
-		this( StringUtils.EMPTY );
-	}
-
-	private Platform( String ext ) {
-		this.ext = ext;
-	}
-
-	public String getExtension() {
-		return this.ext;
-	}
-
-	public String getProgram( String name ) {
-		return name.concat( ext );
-	}
-
+// Specific Processors
+	PENTIUM2,
+	PENTIUM3,
+	PENTIUM4,
+	K6,
+	K62,
+	ATHLON,
+	ATHLONXP,
+	K8
+	
 }

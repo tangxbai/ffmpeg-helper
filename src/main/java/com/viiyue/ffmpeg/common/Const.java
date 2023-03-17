@@ -17,9 +17,6 @@ package com.viiyue.ffmpeg.common;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import com.viiyue.ffmpeg.enums.Platform;
-import com.viiyue.ffmpeg.util.Helper;
-
 /**
  * Plug-in defined constants
  *
@@ -38,7 +35,6 @@ public final class Const {
 
 	// Common constants
 
-	public static final Platform PLATFORM = Helper.getPlatform();
 	public static final String HOME_PATH = System.getProperty( "user.home", "/" );
 	public static final String TEMP_PATH = System.getProperty( "java.io.tmpdir", "/" );
 

@@ -24,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringUtils;
 
 import com.viiyue.ffmpeg.enums.LogLevel;
-import com.viiyue.ffmpeg.executor.AbstractExecutor;
 import com.viiyue.ffmpeg.executor.FFmpegExecutor;
 import com.viiyue.ffmpeg.executor.FFplayExecutor;
 import com.viiyue.ffmpeg.executor.FFprobeExecutor;
@@ -36,6 +35,7 @@ import com.viiyue.ffmpeg.metadata.SimpleFormat;
 import com.viiyue.ffmpeg.metadata.Stream;
 
 /**
+ * FFmpeger
  * 
  * @author tangxbai
  * @since 2022/05/25
@@ -44,20 +44,11 @@ public final class FFmpeger {
 
 	private static final Map<String, Object> caches = new ConcurrentHashMap<>( 16 );
 
-	public static void init( String library, String logLocation ) {
-		AbstractExecutor.setLibrary( library );
-		AbstractExecutor.setLogLocation( logLocation );
-	}
-
-	public static void setLogLocation( String logLocation ) {
-		AbstractExecutor.setLogLocation( logLocation );
-	}
-
 	// FFprobe
 	// For more method calls, please see FFprobeExecutor
 
 	public static FFprobeExecutor ffprobeInput( String input ) {
-		return FFprobeExecutor.build().log( LogLevel.QUIET ).input( input );
+		return FFprobeExecutor.build().logLevel( LogLevel.QUIET ).input( input );
 	}
 
 	public static Optional<FFprobe> readInfo( String input ) {
@@ -113,7 +104,7 @@ public final class FFmpeger {
 	// For more method calls, please see FFmpegExecutor
 
 	public static HelpExecutor helpInfo() {
-		return HelpExecutor.ffmpeg().log( LogLevel.QUIET );
+		return HelpExecutor.ffmpeg().logLevel( LogLevel.QUIET );
 	}
 
 	public static List<SimpleFormat> readSupportedFormats() {
