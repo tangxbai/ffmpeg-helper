@@ -35,7 +35,7 @@ import com.viiyue.ffmpeg.util.Helper;
  */
 abstract class AbstractCommander<T extends AbstractCommander<?>> {
 
-	private final List<Argument> commands = new LinkedList<Argument>();
+	private final List<Argument> commands = new LinkedList<>();
 
 	protected final T output( String output ) {
 		return cmd( Const.ARG_PREFIX, output, true );
@@ -137,7 +137,7 @@ abstract class AbstractCommander<T extends AbstractCommander<?>> {
 		buildArg( cmd, value, isUnique ).quotesWrap();
 		return ( T ) this;
 	}
-
+	
 	/**
 	 * Removes the target command from the command list
 	 * 

@@ -70,8 +70,21 @@ public abstract class GlobalExecutor<T extends AbstractExecutor<?>> extends Abst
 	 * 
 	 * @param value the maximum size of a single allocated block
 	 * @return the current subclass instance
+	 * @deprecated the method name is too long, see {@link #maxAllo(int)}.
 	 */
+	@Deprecated
 	public T maxSizeOfsingleAllocatedBlock( int value ) {
+		return this.maxAllo( value );
+	}
+	
+	/**
+	 * Set maximum size of a single allocated block
+	 * 
+	 * @param value the maximum size of a single allocated block
+	 * @return the current subclass instance
+	 * @since 1.0.1
+	 */
+	public T maxAllo( int value ) {
 		return super.cmd( "max_allo", value );
 	}
 	
@@ -119,8 +132,20 @@ public abstract class GlobalExecutor<T extends AbstractExecutor<?>> extends Abst
 	 * Ignore unknown stream types
 	 * 
 	 * @return the current subclass instance
+	 * @deprecated the method name is too long, see {@link #ignoreUnknown()}
 	 */
+	@Deprecated
 	public T ignoreUnknownStream() {
+		return super.cmd( "ignore_unknown" );
+	}
+	
+	/**
+	 * Ignore unknown stream types
+	 * 
+	 * @return the current subclass instance
+	 * @since 1.0.1
+	 */
+	public T ignoreUnknown() {
 		return super.cmd( "ignore_unknown" );
 	}
 
@@ -166,7 +191,7 @@ public abstract class GlobalExecutor<T extends AbstractExecutor<?>> extends Abst
 	}
 
 	/**
-	 * maximum error rate ratio of decoding errors (0.0: no errors, 1.0: 100% errors) above which ffmpeg
+	 * Maximum error rate ratio of decoding errors (0.0: no errors, 1.0: 100% errors) above which ffmpeg
 	 * returns an error instead of success.
 	 * 
 	 * @param value the maximum error rate ratio
@@ -361,6 +386,54 @@ public abstract class GlobalExecutor<T extends AbstractExecutor<?>> extends Abst
 	 */
 	public T copyts( double value ) {
 		return super.cmd( "copyts", value );
+	}
+	
+	/**
+	 * <p>
+	 * When used with copyts, shift input timestamps so they start at zero.
+	 * 
+	 * <p>
+	 * This means that using e.g. -ss 50 will make output timestamps start at 50 seconds, regardless of what
+	 * timestamp the input file started at.
+	 * 
+	 * @param value the the minimum difference threshold
+	 * @return the current subclass instance
+	 * @since 1.0.1
+	 */
+	public T startAtZero() {
+		return super.cmd( "start_at_zero" );
+	}
+
+	@Override
+	protected void usages() {
+		super.usage( "v", this::logLevel, "Set logging level" );
+		super.usage( "report", this::report, "Generate a report" );
+		super.usage( "max_allo", this::maxAllo, "Set maximum size of a single allocated block" );
+		super.usage( "y", "override()", "Overwrite existing files without confirming" );
+		super.usage( "n", "override(..)", "Never overwrite output files" );
+		super.usage( "ignore_unknown", this::ignoreUnknown, "Ignore unknown stream types" );
+		super.usage( "threads", this::threads, "Set the number of threads to be used" );
+		super.usage( "filter_threads", this::filterThreads, "Number of non-complex filter threads" );
+		super.usage( "filter_complex_threads", this::filterComplexThreads, "Number of threads for -filter_complex" );
+		super.usage( "stats", this::stats, "Print progress report during encoding" );
+		super.usage( "max_error_rate", this::maxErrorRate, "Set fraction of decoding frame failures across all inputs" );
+		super.usage( "bits_per_raw_sample", this::bitPreRawSampe, "Set the number of bits per raw sample" );
+		super.usage( "vol", this::volume, "Change audio volume (256=normal)" );
+		super.usage( "cpuflags", "cpuFlags(...)", "Allows setting and clearing CPU flags" );
+		super.usage( "hide_banner", this::hideBanner, "Suppress printing banner" );
+		super.usage( "copy_unknown", this::copyUnknown, "Copy unknown stream types" );
+		super.usage( "stdin", this::standardInput, "Enable standard input" );
+		super.usage( "nostdin", this::noStandardInput, "Disable standard input" );
+		super.usage( "timelimit", this::timeLimit, "Set max runtime in seconds in CPU user time" );
+		super.usage( "dump", this::dump, "Dump each input packet" );
+		super.usage( "hex", this::hex, "When dumping packets, also dump the payload" );
+		super.usage( "vsync", this::vsync, "Video sync method" );
+		super.usage( "async", this::async, "Audio sync method" );
+		super.usage( "frame_drop_threshold", this::frameDropThreshold, "Frame drop threshold" );
+		super.usage( "adrift_threshold", this::adriftThresholdThreshold, "Audio drift threshold" );
+		super.usage( "copyts", this::copyts, "Copy timestamps" );
+		super.usage( "start_at_zero", this::startAtZero, "Shift input timestamps to start at 0 when using copyts" );
+		super.usageDivider();
 	}
 	
 }

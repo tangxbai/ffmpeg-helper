@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.viiyue.ffmpeg.enums.Library;
+import com.viiyue.ffmpeg.enums.PixelFormat;
 import com.viiyue.ffmpeg.enums.Preset;
 
 /**
@@ -45,14 +46,43 @@ public abstract class CommonExecutor<T extends GlobalExecutor<?>> extends Global
 	 * from the file extension for output files, so this option is not needed in most cases.
 	 * 
 	 * @param format
-	 * @return
+	 * @return the current instance
 	 */
-	public T format( String format ) {
+	public T format( Integer format ) {
 		return super.cmd( "f", format );
 	}
+	
+	/**
+	 * Set pixel format
+	 * 
+	 * @param pf the video pixel format
+	 * @return the current instance
+	 * @since 1.0.1
+	 */
+	public T pixFormat( PixelFormat pf ) {
+		return super.cmd( "pix_fmt", pf );
+	}
 
+	/**
+	 * Set the codec name
+	 * 
+	 * @param codec the codec
+	 * @return the current instance
+	 */
 	public T codec( String codec ) {
-		return super.cmd( "codec", codec );
+		return codec( null, codec );
+	}
+	
+	/**
+	 * Set the codec name
+	 * 
+	 * @param type the stream specifier
+	 * @param codec the codec name
+	 * @return the current instance
+	 * @since 1.0.1
+	 */
+	public T codec( String type, String codec ) {
+		return super.cmd( "c" + ( type == null ? "" : ":" + type ), codec );
 	}
 
 	public T limitSize( int bytes ) {
@@ -107,6 +137,13 @@ public abstract class CommonExecutor<T extends GlobalExecutor<?>> extends Global
 		return ( T ) this;
 	}
 
+	/**
+	 * Set input stream mapping 
+	 * 
+	 * @param who te mapping stream
+	 * @return the current instance
+	 * @since 1.0.1
+	 */
 	public T map( String who ) {
 		return super.cmd( "map", who );
 	}
@@ -231,6 +268,28 @@ public abstract class CommonExecutor<T extends GlobalExecutor<?>> extends Global
 			throw new RuntimeException( "Input file dose not exist: " + inputFile.getAbsolutePath() );
 		}
 		return input;
+	}
+
+	@Override
+	protected void usages() {
+		super.usages();
+		super.usage( "f", this::format, "Force input or output file format" );
+		super.usage( "pix_fmt", this::pixFormat, "Set pixel format" );
+		super.<String>usage( "codec", this::codec, "Codec name" );
+		super.usage( "fs", this::limitSize, "Set the limit file size in bytes" );
+		super.usage( "sseof", this::timeOff, "Set the start time offset relative to EOF" );
+		super.<String>usage( "pre", this::preset, "Preset name" );
+		super.usage( "target", this::target, "Specify target file type" );
+		super.usage( "frames", this::frames, "Set the number of frames to output" );
+		super.usage( "timestamp", this::timestamp, "Set the recording timestamp" );
+		super.usage( "metadata", this::metadata, "Add metadata" );
+		super.<String, String>usage( "ss", this::search, "Set the start time offset" );
+		super.<String, String>usage( "to", this::search, "Record or transcode stop time" );
+		super.usage( "map", this::map, "Set input stream mapping" );
+		super.<Preset>usage( "preset", this::preset, "This option itemizes a range of choices from veryfast (best speed) to veryslow (best quality)" );
+		super.usage( "filter", this::filter, "Set stream filtergraph" );
+		super.<List<String>>usage( "i", this::inputs, "Specifies the input source" );
+		super.usageDivider();
 	}
 
 }

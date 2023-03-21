@@ -17,6 +17,8 @@ package com.viiyue.ffmpeg.util;
 
 import java.awt.Color;
 import java.io.File;
+import java.lang.invoke.SerializedLambda;
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.StringJoiner;
 import java.util.function.Function;
@@ -26,6 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.viiyue.ffmpeg.common.AbstractEnum;
 import com.viiyue.ffmpeg.common.Const;
+import com.viiyue.ffmpeg.common.NoArgUsage;
+import com.viiyue.ffmpeg.common.UsageLambda;
 
 /**
  * Common helper for global project
@@ -185,6 +189,51 @@ public final class Helper {
 			return Runtime.getRuntime().exec( cmd ).waitFor() == 0;
 		} catch ( Exception e ) {
 			return false;
+		}
+	}
+	
+	public static String fillLength( int length, String input, char placeholder ) {
+		return fillLength( length, input, placeholder, false );
+	}
+	
+	public static String fillLength( int length, String input, char placeholder, boolean reverse ) {
+		if ( input == null ) {
+			return Const.NONE;
+		}
+		if ( input.length() >= length ) {
+			return input;
+		}
+		StringBuilder builder = new StringBuilder( input );
+		while ( builder.length() < length ) {
+			if ( reverse ) {
+				builder.insert( 0, placeholder );
+			} else {
+				builder.append( placeholder );
+			}
+		}
+		return builder.toString();
+	}
+	
+	public static String getLambdaMethod( UsageLambda lambda ) {
+		if ( lambda == null ) {
+			return Const.NULL;
+		}
+		try {
+			Method method = lambda.getClass().getDeclaredMethod( "writeReplace" );
+			if ( !method.isAccessible() ) {
+				method.setAccessible( true );
+			}
+			SerializedLambda sl = ( SerializedLambda ) method.invoke( lambda );
+			String methodName = sl.getImplMethodName();
+			if ( lambda instanceof NoArgUsage ) {
+				return methodName + "()";
+			}
+			String implMethodName = sl.getInstantiatedMethodType();
+			implMethodName = implMethodName.substring( 0, implMethodName.indexOf( ")" ) );
+			implMethodName = implMethodName.substring( implMethodName.lastIndexOf( "/" ) + 1, implMethodName.lastIndexOf( ";" ) );
+			return implMethodName + "(" + implMethodName + ")";
+		} catch ( Exception e ) {
+			return lambda.getClass().getSimpleName();
 		}
 	}
 

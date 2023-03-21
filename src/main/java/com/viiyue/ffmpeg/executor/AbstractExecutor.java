@@ -21,6 +21,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -30,7 +31,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 
+import com.viiyue.ffmpeg.common.NoArgUsage;
+import com.viiyue.ffmpeg.common.OneArgUsage;
+import com.viiyue.ffmpeg.common.TwoArgUsage;
 import com.viiyue.ffmpeg.enums.Library;
+import com.viiyue.ffmpeg.metadata.Usage;
 import com.viiyue.ffmpeg.util.Helper;
 
 /**
@@ -43,6 +48,8 @@ import com.viiyue.ffmpeg.util.Helper;
 public abstract class AbstractExecutor<T extends AbstractCommander<?>> extends AbstractCommander<T> {
 
 	private final Library library;
+	private List<Usage> usages;
+	private static final String USAGE = "< USAGES >";;
 
 	public AbstractExecutor( Library library ) {
 		this.library = library;
@@ -162,5 +169,103 @@ public abstract class AbstractExecutor<T extends AbstractCommander<?>> extends A
 			}
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	protected abstract void usages();
+	
+	protected final void usage( String cmd, String description ) {
+		this.usages.add( Usage.builder().usage( cmd ).des( description ) );
+	}
+	protected final void usage( String cmd, String usage, String description ) {
+		this.usages.add( Usage.builder().usage( cmd, usage ).des( description ) );
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param cmd
+	 * @param description
+	 * @since 1.0.1
+	 */
+	protected final void usage( String cmd, NoArgUsage usage, String description ) {
+		this.usages.add( Usage.builder().usage( cmd, usage ).des( description ) );
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param cmd
+	 * @param description
+	 * @since 1.0.1
+	 */
+	protected final <E> void usage( String cmd, OneArgUsage<E> usage, String description ) {
+		this.usages.add( Usage.builder().usage( cmd, usage ).des( description ) );
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param cmd
+	 * @param description
+	 * @since 1.0.1
+	 */
+	protected final <A, B> void usage( String cmd, TwoArgUsage<A, B> usage, String description ) {
+		this.usages.add( Usage.builder().usage( cmd, usage ).des( description ) );
+	}
 
+	/**
+	 * 
+	 * 
+	 * @param cmd
+	 * @param description
+	 * @since 1.0.1
+	 */
+	protected final void usageDivider() {
+		this.usages.add( Usage.builder().divider() );
+	}
+	
+	public final void printUsage() {
+		if ( this.usages == null ) {
+			this.usages = new LinkedList<Usage>();
+		}
+		int max = 0, mMax = 0;
+		this.usages();
+		for ( Usage usage : this.usages ) {
+			max = Math.max( usage.getUsage().length(), max );
+			mMax = Math.max( usage.mLength(), mMax );
+		}
+		String tag = Helper.fillLength( max / 2 + USAGE.length() / 2, USAGE, '-', true );
+		print( tag + " -----------------------------------------------------" );
+		for ( Usage usage : this.usages ) {
+			String key = usage.getUsage();
+			if ( usage.isDivider() ) {
+				print( "----------------------------------------------------------------------" );
+			} else {
+				String method = Helper.fillLength( mMax, usage.getMethod(), ' ' );
+				print( Helper.fillLength( max, key, ' ' ) + " : " + method + " : " + usage.getDescription() );
+			}
+		}
+		print( "----------------------------------------------------------------------" );
+		print( "NOTE: If there is nothing you need here, call the #cmd(...) method." );
+		print( "----------------------------------------------------------------------" );
+	}
+	
+	/**
+	 * 
+	 * 
+	 * @param logger
+	 * @param message
+	 * @param args
+	 */
+	private void print( String message ) {
+		Logger logger = getLogger();
+		if ( logger != null && logger.isInfoEnabled() ) {
+			logger.info( message );
+		} else {
+			System.out.println( message );
+		}
+	}
+	
 }

@@ -25,6 +25,7 @@ import com.viiyue.ffmpeg.enums.Library;
  * 
  * @author tangxbai
  * @since 2022/05/25
+ * @deprecated No longer used, please see also: {@link FFmpegExecutor}.
  */
 public class AudioExecutor extends CommonExecutor<AudioExecutor> {
 
